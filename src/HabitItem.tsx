@@ -51,12 +51,20 @@ export function HabitItem({ habit, visibleDates }: HabitItemProps) {
 }
 
 function getStreak(completions: Date[]) {
-  let streak = 0
-  let date = new Date()
+  if (completions.length === 0) return 0
 
-  while (completions.some(c => isSameDay(c, date))) {
+  // Find the most recent completion date
+  const mostRecent = new Date(
+    Math.max(...completions.map(d => d.getTime()))
+  )
+
+  let streak = 0
+  let currentDate = new Date(mostRecent)
+
+  // Count backwards from most recent completion while consecutive days exist
+  while (completions.some(c => isSameDay(c, currentDate))) {
     streak++
-    date = subDays(date, 1)
+    currentDate = subDays(currentDate, 1)
   }
 
   return streak
